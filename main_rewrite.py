@@ -45,13 +45,13 @@ class Player(pygame.sprite.Sprite):
         print(type(images[0]))
         self.rect = self.image.get_rect()
         self.width = width
-        self.rect.x =  x
+        self.rect.x = x
         self.rect.y = y
 
     def update(self, pressed):
         pass
 
-    def movePlayer(self, pressed):
+    def movePlayer(self):
         pressed = pygame.key.get_pressed()
 
         up, down, left, right = [pressed[key] for key in (pygame.K_UP, pygame.K_DOWN, pygame.K_LEFT, pygame.K_RIGHT)]
@@ -88,8 +88,8 @@ def gameLoop():
 
         if pygame.event.peek(pygame.QUIT) == True:
             gameExit = True
-        pressed = pygame.key.get_pressed()
-        player.movePlayer(pressed)
+
+        player.movePlayer()
 
         pygame.display.update(all_sprites.draw(gameDisplay))
         clock.tick(30)
