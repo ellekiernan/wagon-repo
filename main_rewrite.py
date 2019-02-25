@@ -34,24 +34,35 @@ def load_images(path):
 class Cactus():
     pass
 
-class HorseDrugs():
-    pass
+class HorseDrugs(pygame.sprite.Sprite):
+    def __init__(self, x = random.randrange(0, display_width), y = -300, width = 50, images = [], speed = 10):
+        super().__init__(all_sprites)
+        self.images = images
+        self.image = image[0]
+        self.rect = image.get_rect()
+        self.rect.x = x
+        self.rect.y = y
+        self.width = width
+        self.speed = speed
+
+    def update(self):
+        pass
+    
+    def move(self):
+        pass
+
 
 class Player(pygame.sprite.Sprite):
     def __init__(self, x = 0.5 * display_width, y = 0.6 * display_height, width = 50, images = [], speed = 10):
         super().__init__(all_sprites)
         self.images = images
         self.image = images[0]
-        print(type(images[0]))
         self.rect = self.image.get_rect()
         self.width = width
         self.rect.x = x
         self.rect.y = y
 
-    def update(self, pressed):
-        pass
-
-    def movePlayer(self):
+    def update(self):
         pressed = pygame.key.get_pressed()
 
         up, down, left, right = [pressed[key] for key in (pygame.K_UP, pygame.K_DOWN, pygame.K_LEFT, pygame.K_RIGHT)]
@@ -71,6 +82,26 @@ class Player(pygame.sprite.Sprite):
         self.rect.x += self.x_change
         self.rect.y += self.y_change
 
+    # def movePlayer(self):
+    #     pressed = pygame.key.get_pressed()
+
+    #     up, down, left, right = [pressed[key] for key in (pygame.K_UP, pygame.K_DOWN, pygame.K_LEFT, pygame.K_RIGHT)]
+    #     if up:
+    #         self.y_change = -4
+    #     elif down:
+    #         self.y_change = 10
+    #     else:
+    #         self.y_change = 0
+    #     if right:
+    #         self.x_change = 8
+    #     elif left:
+    #         self.x_change = -8
+    #     else:
+    #         self.x_change = 0
+        
+    #     self.rect.x += self.x_change
+    #     self.rect.y += self.y_change
+
 
 path = "/Users/elle/repositories/wagon-repo/images/"
 player_images = load_images(path + "wagon/")
@@ -89,7 +120,7 @@ def gameLoop():
         if pygame.event.peek(pygame.QUIT) == True:
             gameExit = True
 
-        player.movePlayer()
+        all_sprites.update()
 
         pygame.display.update(all_sprites.draw(gameDisplay))
         clock.tick(30)
