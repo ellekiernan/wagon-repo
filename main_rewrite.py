@@ -5,10 +5,6 @@ import os, sys
 from pygame.locals import *
 
 #TODO Define classes for each object with sprites
-#TODO 
-#
-#
-#
 
 pygame.init()
 display_width = 800
@@ -52,9 +48,8 @@ class Player(pygame.sprite.Sprite):
         self.rect.x =  0.5 * display_width
         self.rect.y = 0.7 * display_height
 
-    def update(self):
+    def update(self, pressed):
         pass
-
 
 path = "/Users/elle/repositories/wagon-repo/images/"
 player_images = load_images(path + "wagon/")
