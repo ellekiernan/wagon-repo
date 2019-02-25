@@ -96,6 +96,5 @@ def gameLoop():
 
 
 gameLoop()
-pygame.display,quit()
+pygame.display.quit()
 pygame.quit()
-quit()
