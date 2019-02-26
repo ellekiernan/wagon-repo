@@ -31,8 +31,22 @@ def load_images(path):
     return images
 
 
-class Cactus():
-    pass
+class Cactus(pygame.sprite.Sprite):
+    def __init__(self, x = random.randrange(0, display_width), y = -300, width = 50, images = [], speed = 5):
+        super().__init__(all_sprites)
+        self.images = images
+        self.image = images[0]
+        self.rect = self.image.get_rect()
+        self.rect.x = x
+        self.rect.y = y
+        self.width = width
+        self.speed = speed
+
+    def update(self):
+        self.rect.y += self.speed
+        if self.rect.y > display_height:
+            self.rect.y = -50
+            self.rect.x = random.randrange(0, display_width)
 
 class HorseDrugs(pygame.sprite.Sprite):
     def __init__(self, x = random.randrange(0, display_width), y = -300, width = 50, images = [], speed = 5):
@@ -47,10 +61,9 @@ class HorseDrugs(pygame.sprite.Sprite):
 
     def update(self):
         self.rect.y += self.speed
-        pass
-    
-    def move(self):
-        pass
+        if self.rect.y > display_height:
+            self.rect.y = -50
+            self.rect.x = random.randrange(0, display_width)
 
 
 class Player(pygame.sprite.Sprite):
@@ -87,6 +100,9 @@ class Player(pygame.sprite.Sprite):
 #load images for things in gameLoop
 player_images = load_images(image_path + "wagon/")
 drug_images = load_images(image_path + "GOODhorsedrugs/")
+cactus1_images = load_images(image_path + "cactus1/")
+cactus2_images = load_images(image_path + "cactus2/")
+cactus_images = cactus1_images + cactus2_images
 
 #create sprite groups for sprites in gameLoop
 player_group = pygame.sprite.RenderUpdates()
@@ -97,6 +113,7 @@ all_sprites = pygame.sprite.RenderUpdates()
 #initialize the sprites
 player = Player(0.5 * display_width, 0.7 * display_height, 50, player_images, 10)
 horse_drugs = HorseDrugs(images = drug_images)
+cactus = Cactus(images = cactus1_images)
 
 #add sprites to non all_sprites groups (sprites initialized in super().init() to be in all_sprites)
 player.add(player_group)
@@ -107,12 +124,13 @@ def gameLoop():
     gameDisplay.fill(white)
 
     while not gameExit:
+        gameDisplay.fill(white)
 
         if pygame.event.peek(pygame.QUIT) == True:
             gameExit = True
 
         all_sprites.update()
-
+        
         pygame.display.update(all_sprites.draw(gameDisplay))
         clock.tick(30)
 
