@@ -25,7 +25,8 @@ def load_images(path):
     image_directory.sort()
     for png in image_directory:
         image = pygame.image.load(path + png).convert_alpha()
-        image = pygame.transform.scale(image, (128, 256))
+        size = image.get_rect().size
+        image = pygame.transform.scale(image, (5 * size[0], 5 * size[1]))
         images.append(image)
         #Make images auto scale to correct size
     return images
@@ -61,10 +62,6 @@ class HorseDrugs(pygame.sprite.Sprite):
 
     def update(self):
         self.rect.y += self.speed
-        if self.rect.y > display_height:
-            self.rect.y = -50
-            self.rect.x = random.randrange(0, display_width)
-
 
 class Player(pygame.sprite.Sprite):
     def __init__(self, x = 0.5 * display_width, y = 0.6 * display_height, width = 50, images = [], speed = 10):
@@ -117,6 +114,7 @@ cactus = Cactus(images = cactus1_images)
 
 #add sprites to non all_sprites groups (sprites initialized in super().init() to be in all_sprites)
 player.add(player_group)
+cactus.add(cactus_group)
 
 def gameLoop():
 
