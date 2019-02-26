@@ -34,7 +34,7 @@ def load_images(path):
 
 class Cactus(pygame.sprite.Sprite):
     def __init__(self, x = random.randrange(0, display_width), y = -300, width = 50, images = [], speed = 5):
-        super().__init__(all_sprites)
+        super().__init__(all_sprites, cactus_group)
         self.images = images
         self.image = images[0]
         self.rect = self.image.get_rect()
@@ -48,6 +48,9 @@ class Cactus(pygame.sprite.Sprite):
         if self.rect.y > display_height:
             self.rect.y = -50
             self.rect.x = random.randrange(0, display_width)
+            if len(cactus_group.sprites()) < 15:
+                new_cactus = Cactus(images = cactus1_images)
+            
 
 class HorseDrugs(pygame.sprite.Sprite):
     def __init__(self, x = random.randrange(0, display_width), y = -300, width = 50, images = [], speed = 5):
