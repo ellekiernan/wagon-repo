@@ -76,6 +76,8 @@ class Player(pygame.sprite.Sprite):
         self.rect.x = x
         self.rect.y = y
 
+        self.drug_count = 0
+
     def update(self):
         pressed = pygame.key.get_pressed()
 
@@ -97,12 +99,32 @@ class Player(pygame.sprite.Sprite):
         self.rect.y += self.y_change
 
 
+class boostIcon(pygame.sprite.Sprite):
+    def __init__(self, x = 0.0001 * display_width, y = 0.01 * display_height, images = []):
+        super().__init__(all_sprites)
+        
+        self.images = images
+        self.image = self.images[0]
+        self.rect = self.image.get_rect()
+        self.rect.x = x
+        self.rect.y = y
+
+    def update(self):
+        self.image = self.images[player.drug_count]
+        pass
+
+def crash():
+    gameExit = True
+    pygame.display.quit()
+    pygame.quit()
+
 #load images for things in gameLoop
 player_images = load_images(image_path + "wagon/")
 drug_images = load_images(image_path + "GOODhorsedrugs/")
 cactus1_images = load_images(image_path + "cactus1/")
 cactus2_images = load_images(image_path + "cactus2/")
 cactus_images = cactus1_images + cactus2_images
+boost_icon_images = load_images(image_path + "boost_icon/")
 
 #create sprite groups for sprites in gameLoop
 player_group = pygame.sprite.RenderUpdates()
@@ -114,10 +136,13 @@ all_sprites = pygame.sprite.RenderUpdates()
 player = Player(0.5 * display_width, 0.7 * display_height, 50, player_images, 10)
 horse_drugs = HorseDrugs(images = drug_images)
 cactus = Cactus(images = cactus1_images)
+boost_icon = boostIcon(images = boost_icon_images)
+
 
 #add sprites to non all_sprites groups (sprites initialized in super().init() to be in all_sprites)
 player.add(player_group)
 cactus.add(cactus_group)
+horse_drugs.add(drug_group)
 
 def gameLoop():
 
@@ -129,6 +154,14 @@ def gameLoop():
 
         if pygame.event.peek(pygame.QUIT) == True:
             gameExit = True
+
+
+
+        if pygame.sprite.spritecollide(player, cactus_group, False):
+            gameExit = True
+
+        if pygame.sprite.spritecollide(player, drug_group, dokill = True):
+            player.drug_count += 1
 
         all_sprites.update()
         
