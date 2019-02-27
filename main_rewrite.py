@@ -102,7 +102,6 @@ class Player(pygame.sprite.Sprite):
         self.rect.x += self.x_change
         self.rect.y += self.y_change
 
-
 class boostIcon(pygame.sprite.Sprite):
     def __init__(self, x = 0.0001 * display_width, y = 0.01 * display_height, images = []):
         super().__init__(all_sprites)
@@ -116,6 +115,12 @@ class boostIcon(pygame.sprite.Sprite):
     def update(self):
         self.image = self.images[player.drug_count]
         pass
+
+def generic_text(text, size, color, text_center):
+        font = pygame.font.Font("freesansbold.ttf", size)
+        rendered_text = font.render(text, True, color)
+        gameDisplay.blit(rendered_text, rendered_text.get_rect(center = text_center))
+        pygame.display.update()
 
 def crash():
     gameExit = True
