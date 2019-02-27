@@ -11,7 +11,7 @@ display_width = 800
 display_height = 600
 gameDisplay = pygame.display.set_mode((display_width, display_height))
 clock = pygame.time.Clock()
-image_path = "/Users/elle/repositories/wagon-repo/images/"
+image_path = "/Users/elle/repos/wagon-repo/images/"
 white = (255, 255, 255)
 black = (0, 0, 0)
 red = (200, 0, 0)
@@ -48,6 +48,9 @@ class Cactus(pygame.sprite.Sprite):
         if self.rect.y > display_height:
             self.rect.y = -50
             self.rect.x = random.randrange(0, display_width)
+
+            player.dodged_cactuses += 1
+
             if len(cactus_group.sprites()) < 15:
                 new_cactus = Cactus(images = cactus1_images)
             
@@ -76,6 +79,7 @@ class Player(pygame.sprite.Sprite):
         self.rect.x = x
         self.rect.y = y
 
+        self.dodged_cactuses = 0
         self.drug_count = 0
 
     def update(self):
@@ -137,7 +141,6 @@ player = Player(0.5 * display_width, 0.7 * display_height, 50, player_images, 10
 horse_drugs = HorseDrugs(images = drug_images)
 cactus = Cactus(images = cactus1_images)
 boost_icon = boostIcon(images = boost_icon_images)
-
 
 #add sprites to non all_sprites groups (sprites initialized in super().init() to be in all_sprites)
 player.add(player_group)
