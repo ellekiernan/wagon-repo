@@ -113,7 +113,7 @@ class Player(pygame.sprite.Sprite):
         self.rect.y += self.y_change
 
 class boostIcon(pygame.sprite.Sprite):
-    def __init__(self, x = 0.0001 * display_width, y = 0.01 * display_height, images = []):
+    def __init__(self, x = 0.0001 * display_width, y = 0.01 * display_height, images = [], index = 0):
         super().__init__(all_sprites)
         
         self.images = images
@@ -126,26 +126,19 @@ class boostIcon(pygame.sprite.Sprite):
         self.image = self.images[player.drug_count]
 
 class scoreCount(pygame.sprite.Sprite):
-    def __init__(self, x = 0.0001 * display_width, y = 0.02 * display_height, images = []):
+    def __init__(self, x, y, images = []):
         super().__init__(all_sprites)
 
         self.images = images
         self.image = images[0]
         self.rect = self.image.get_rect()
-        self.rect.x = x
-        self.rect.y = y
+        self.rect.x = x * 0.01 * display_width
+        self.rect.y = y * 0.09 * display_height
 
     def update(self):
+        score = list(player.dodged_cactuses)
         self.image = self.images[player.dodged_cactuses]
-        pass
 
-
-
-def generic_text(text, size, color, text_center):
-        font = pygame.font.Font("freesansbold.ttf", size)
-        rendered_text = font.render(text, True, color)
-        gameDisplay.blit(rendered_text, rendered_text.get_rect(center = text_center))
-        pygame.display.update()
 
 def crash():
     gameExit = True
@@ -173,13 +166,17 @@ player = Player(0.5 * display_width, 0.7 * display_height, 50, player_images, 10
 horse_drugs = HorseDrugs(images = drug_images)
 cactus = Cactus(images = cactus1_images)
 boost_icon = boostIcon(images = boost_icon_images)
-score_icon = scoreCount(images = number_images)
+score_icon3 = scoreCount(1, 1, number_images, 2)
+score_icon2 = scoreCount(3, 1, number_images, 1)
+score_icon1 = scoreCount(5, 1, number_images, 0)
+
+
 
 #add sprites to non all_sprites groups (sprites initialized in super().init() to be in all_sprites)
 player.add(player_group)
 cactus.add(cactus_group)
 horse_drugs.add(drug_group)
-score_icon.add(hud_sprites)
+hud_sprites.add(score_icon1, score_icon2, score_icon3)
 
 def gameLoop():
 
