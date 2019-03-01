@@ -52,7 +52,7 @@ class Cactus(pygame.sprite.Sprite):
 
             player.dodged_cactuses += 1
 
-            if len(cactus_group.sprites()) < 15:
+            if len(cactus_group.sprites()) < 10:
                 new_cactus = Cactus(images = cactus1_images)
             
 
@@ -77,8 +77,8 @@ class Player(pygame.sprite.Sprite):
         self.image = images[0]
         self.rect = self.image.get_rect()
         self.width = width
-        self.rect.x = x
-        self.rect.y = y
+        self.rect.centerx = x
+        self.rect.centery = y
 
         self.dodged_cactuses = 0
         self.drug_count = 0
@@ -89,15 +89,16 @@ class Player(pygame.sprite.Sprite):
 
         up, down, left, right, space = [pressed[key] for key in (pygame.K_UP, pygame.K_DOWN, pygame.K_LEFT, pygame.K_RIGHT, pygame.K_SPACE)]
 
-        if up and self.rect.y > 0:
+
+        if up and self.rect.centery > 0:
             self.y_change = -4
-        elif down and self.rect.y < display_height:
+        elif down and self.rect.centery < display_height:
             self.y_change = 10
         else:
             self.y_change = 0
-        if right and self.rect.x + self.width < display_width:
+        if right and self.rect.centerx  < display_width:
             self.x_change = 8
-        elif left and self.rect.x > 0:
+        elif left and self.rect.centerx > 0:
             self.x_change = -8
         else:
             self.x_change = 0
@@ -109,11 +110,11 @@ class Player(pygame.sprite.Sprite):
 
 
 
-        self.rect.x += self.x_change
-        self.rect.y += self.y_change
+        self.rect.centerx += self.x_change
+        self.rect.centery += self.y_change
 
 class boostIcon(pygame.sprite.Sprite):
-    def __init__(self, x = 0.0001 * display_width, y = 0.01 * display_height, images = [], index = 0):
+    def __init__(self, x = 0.0001 * display_width, y = 0.01 * display_height, images = []):
         super().__init__(all_sprites)
         
         self.images = images
@@ -123,22 +124,33 @@ class boostIcon(pygame.sprite.Sprite):
         self.rect.y = y
 
     def update(self):
-        self.image = self.images[player.drug_count]
+        if player.drug_count < 5:
+            self.image = self.images[player.drug_count]
 
-class scoreCount(pygame.sprite.Sprite):
-    def __init__(self, x, y, images = []):
-        super().__init__(all_sprites)
+class Background():
+    def __init__(self, image):
 
-        self.images = images
-        self.image = images[0]
-        self.rect = self.image.get_rect()
-        self.rect.x = x * 0.01 * display_width
-        self.rect.y = y * 0.09 * display_height
+        self.y1 = 0
+        self.image = image
+        self.y2 = -display_height
 
     def update(self):
-        score = list(player.dodged_cactuses)
-        self.image = self.images[player.dodged_cactuses]
+        if self.y1 > display_height:
+            self.y1 = -display_height + 5
+        if self.y2 > display_height:
+            self.y2 = -display_height + 5
+        self.y1 += 5
+        self.y2 += 5
+        
+    
+    def render(self):
+        gameDisplay.blit(self.image, (0, self.y1))
+        gameDisplay.blit(self.image, (0, self.y2))
 
+def generic_text(text, size, color, text_center):
+        font = pygame.font.Font("freesansbold.ttf", size)
+        rendered_text = font.render(text, True, color)
+        gameDisplay.blit(rendered_text, rendered_text.get_rect(center = text_center))
 
 def crash():
     gameExit = True
@@ -154,34 +166,37 @@ cactus_images = cactus1_images + cactus2_images
 boost_icon_images = load_images(image_path + "boost_icon/")
 number_images = load_images(image_path + "numbers/")
 
+bg_image = pygame.image.load("/Users/elle/repos/wagon-repo/images/background/background0.png").convert_alpha()
+bg_size = bg_image.get_rect().size
+bg_image = pygame.transform.scale(bg_image, (5 * bg_size[0], 5 * bg_size[1]))
+
+
 #create sprite groups for sprites in gameLoop
 player_group = pygame.sprite.RenderUpdates()
 cactus_group = pygame.sprite.RenderUpdates()
 drug_group = pygame.sprite.RenderUpdates()
 all_sprites = pygame.sprite.RenderUpdates()
-hud_sprites = pygame.sprite.RenderUpdates()
+hud_group = pygame.sprite.RenderUpdates()
+
 
 #initialize the sprites
 player = Player(0.5 * display_width, 0.7 * display_height, 50, player_images, 10)
 horse_drugs = HorseDrugs(images = drug_images)
 cactus = Cactus(images = cactus1_images)
 boost_icon = boostIcon(images = boost_icon_images)
-score_icon3 = scoreCount(1, 1, number_images, 2)
-score_icon2 = scoreCount(3, 1, number_images, 1)
-score_icon1 = scoreCount(5, 1, number_images, 0)
 
+#initialize the background
+bg = Background(image = bg_image)
 
 
 #add sprites to non all_sprites groups (sprites initialized in super().init() to be in all_sprites)
 player.add(player_group)
 cactus.add(cactus_group)
 horse_drugs.add(drug_group)
-hud_sprites.add(score_icon1, score_icon2, score_icon3)
+
 
 def gameLoop():
-
     gameExit = False
-    gameDisplay.fill(white)
 
     while not gameExit:
         gameDisplay.fill(white)
@@ -197,12 +212,20 @@ def gameLoop():
         if pygame.sprite.spritecollide(player, cactus_group, False) and player.drugged == False:
             gameExit = True
 
-        if pygame.sprite.spritecollide(player, drug_group, dokill = True):
-            player.drug_count += 1
+        if pygame.sprite.spritecollide(player, drug_group, False):
+            horse_drugs.rect.y = -random.randrange(600, 1200)
+            if player.drug_count < 5:
+                player.drug_count += 1
 
         all_sprites.update()
-        
+        bg.render()
+        bg.update()
+
+        generic_text(str(player.dodged_cactuses), 40, black, (0.04 * display_width, 0.1 * display_height))
+
+
         pygame.display.update(all_sprites.draw(gameDisplay))
+        
         clock.tick(30)
 
 
