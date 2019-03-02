@@ -213,7 +213,7 @@ def gameLoop():
             gameExit = True
 
         if pygame.sprite.spritecollide(player, drug_group, False):
-            horse_drugs.rect.y = -random.randrange(600, 1200)
+            horse_drugs.rect.y = -random.randrange(100, 1400)
             if player.drug_count < 5:
                 player.drug_count += 1
 
@@ -226,7 +226,7 @@ def gameLoop():
 
         pygame.display.update(all_sprites.draw(gameDisplay))
         
-        clock.tick(30)
+        clock.tick(60)
 
 
 gameLoop()
