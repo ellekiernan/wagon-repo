@@ -18,6 +18,8 @@ red = (200, 0, 0)
 green = (0, 200, 0)
 blue = (0, 0, 200)
 
+seven_fps = pygame.USEREVENT + 7
+pygame.time.set_timer(seven_fps, 143)
 
 def load_images(path):
     images = []
@@ -80,9 +82,12 @@ class Player(pygame.sprite.Sprite):
         self.rect.centerx = x
         self.rect.centery = y
 
+        self.index = 0
+
         self.dodged_cactuses = 0
         self.drug_count = 0
         self.drugged = False
+
 
     def update(self):
         pressed = pygame.key.get_pressed()
@@ -108,10 +113,11 @@ class Player(pygame.sprite.Sprite):
             self.drugged = True
             pygame.time.set_timer(USEREVENT, 5000)
 
-
-
         self.rect.centerx += self.x_change
         self.rect.centery += self.y_change
+
+        
+
 
 class boostIcon(pygame.sprite.Sprite):
     def __init__(self, x = 0.0001 * display_width, y = 0.01 * display_height, images = []):
@@ -141,7 +147,6 @@ class Background():
             self.y2 = -display_height + 5
         self.y1 += 5
         self.y2 += 5
-        
     
     def render(self):
         gameDisplay.blit(self.image, (0, self.y1))
@@ -156,6 +161,7 @@ def crash():
     gameExit = True
     pygame.display.quit()
     pygame.quit()
+
 
 #load images for things in gameLoop
 player_images = load_images(image_path + "wagon/")
@@ -195,26 +201,62 @@ cactus.add(cactus_group)
 horse_drugs.add(drug_group)
 
 
-def gameLoop():
-    gameExit = False
 
-    while not gameExit:
-        gameDisplay.fill(white)
+def Intro():
+    running = True
+
+    #initialize sprites for use in intro before later killing them
+    intro_sprites = pygame.sprite.RenderUpdates()
+    for i in range(10):
+        cactus = Cactus(images = cactus1_images)
+
+    
+    while running:
 
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
-                gameExit = True
+                running = False
+
+    
+        bg.render()
+        be.update()
+        all_sprites.update()
+
+        pygame.display.update(all_sprites.draw(gameDisplay))
+
+        clock.tick(30)
+    
+
+def gameLoop():
+    running = True
+
+    while running:
+
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                running = False
             if event.type == USEREVENT:
                 player.drugged = False
                 pygame.time.set_timer(USEREVENT, 0)
+            if event.type == seven_fps:
+                player.index += 1
+                if player.index >= len(player_images):
+                    player.index = 0
+                player.image = player.images[player.index]
 
+                
 
         if pygame.sprite.spritecollide(player, cactus_group, False) and player.drugged == False:
-            gameExit = True
+            running = False
 
         if pygame.sprite.spritecollide(player, drug_group, False):
+<<<<<<< HEAD
             horse_drugs.rect.y = -random.randrange(100, 1400)
             if player.drug_count < 5:
+=======
+            horse_drugs.rect.y = -random.randrange(1000, 1600)
+            if player.drug_count < 4:
+>>>>>>> master
                 player.drug_count += 1
 
         all_sprites.update()
