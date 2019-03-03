@@ -4,7 +4,7 @@ import time
 import os, sys
 from pygame.locals import *
 
-#TODO Define classes for each object with sprites
+#game level constants
 
 pygame.init()
 display_width = 800
@@ -19,7 +19,7 @@ green = (0, 200, 0)
 blue = (0, 0, 200)
 
 seven_fps = pygame.USEREVENT + 7
-pygame.time.set_timer(seven_fps, 143)
+pygame.time.set_timer(seven_fps, 83)
 
 def load_images(path):
     images = []
@@ -95,6 +95,9 @@ class HorseDrugs(pygame.sprite.Sprite):
     def update(self):
         self.rect.y += self.speed
 
+        if self.rect.y > display_height:
+            self.rect.y = -random.randrange(1000, 1600)
+
 class Player(pygame.sprite.Sprite):
     def __init__(self, x = 0.5 * display_width, y = 0.6 * display_height, width = 50):
         super().__init__(all_sprites)
@@ -140,7 +143,7 @@ class Player(pygame.sprite.Sprite):
         self.rect.centery += self.y_change
 
 class boostIcon(pygame.sprite.Sprite):
-    def __init__(self, x = 0.0001 * display_width, y = 0.01 * display_height):
+    def __init__(self, x = 0.01* display_width, y = 0.1 * display_height):
         super().__init__(all_sprites)
         
         self.images = boosticon_images
@@ -316,7 +319,7 @@ def gameLoop():
         bg.render()
         bg.update()
 
-        generic_text(str(player.dodged_cactuses), 40, black, (0.04 * display_width, 0.1 * display_height))
+        generic_text(str(player.dodged_cactuses), 40, black, (0.04 * display_width, 0.05 * display_height))
 
 
         pygame.display.update(all_sprites.draw(gameDisplay))
