@@ -78,7 +78,7 @@ class IntroCactus(pygame.sprite.Sprite):
     def update(self):
         self.rect.y += self.speed
         if self.rect.y > display_height:
-            self.rect.y = -random.randrange(10, 100)
+            self.rect.y = -100
             self.rect.x = random.randrange(0, display_width)
 
 class HorseDrugs(pygame.sprite.Sprite):
