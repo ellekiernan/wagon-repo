@@ -113,7 +113,6 @@ class Player(pygame.sprite.Sprite):
 
 
     def update(self):
-        print("NOOOOOOO")
         pressed = pygame.key.get_pressed()
 
         up, down, left, right, space = [pressed[key] for key in (pygame.K_UP, pygame.K_DOWN, pygame.K_LEFT, pygame.K_RIGHT, pygame.K_SPACE)]
@@ -243,18 +242,14 @@ def Intro():
     start_button = StartButton()
     quit_button = QuitButton()
     
-
     while running:
 
-        print(all_sprites.sprites())
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 running = False
 
         pressed = pygame.key.get_pressed()
         left, right, space = [pressed[key] for key in (pygame.K_LEFT, pygame.K_RIGHT, pygame.K_SPACE)]
-
-     
 
         if left:
             start_button.selected = 1
@@ -265,6 +260,7 @@ def Intro():
 
         if space and start_button.selected:
             intro_sprites.empty()
+            running = False
             gameLoop()
         elif space and quit_button.selected:
             running = False
@@ -276,21 +272,21 @@ def Intro():
         pygame.display.update(intro_sprites.draw(gameDisplay))
 
         clock.tick(30)
-    
+
+
+player = Player(0.5 * display_width, 0.7 * display_height)
+horse_drugs = HorseDrugs()
+cactus = Cactus()
+boost_icon = boostIcon()
+
+#add sprites to non all_sprites groups (sprites initialized in super().init() to be in all_sprites)
+player.add(player_group)
+cactus.add(cactus_group)
+horse_drugs.add(drug_group)
 
 def gameLoop():
     running = True
 
-    #initialize the sprites
-    player = Player(0.5 * display_width, 0.7 * display_height)
-    horse_drugs = HorseDrugs()
-    cactus = Cactus()
-    boost_icon = boostIcon()
-
-    #add sprites to non all_sprites groups (sprites initialized in super().init() to be in all_sprites)
-    player.add(player_group)
-    cactus.add(cactus_group)
-    horse_drugs.add(drug_group)
 
     while running:
 
