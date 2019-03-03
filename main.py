@@ -11,7 +11,7 @@ display_width = 800
 display_height = 600
 gameDisplay = pygame.display.set_mode((display_width, display_height))
 clock = pygame.time.Clock()
-image_path = "/Users/elle/repos/wagon-repo/images/"
+image_path = "images/"
 white = (255, 255, 255)
 black = (0, 0, 0)
 red = (200, 0, 0)
@@ -314,6 +314,9 @@ def gameLoop():
             horse_drugs.rect.y = -random.randrange(1000, 1600)
             if player.drug_count < 4:
                 player.drug_count += 1
+
+        if pygame.sprite.spritecollide(horse_drugs, cactus_group, False):
+            horse_drugs.rect.x = random.randrange(0, display_width)
 
         all_sprites.update()
         bg.render()
