@@ -34,11 +34,18 @@ def load_images(path):
     return images
 
 
+cactus1_images = load_images(image_path + "cactus1/")
+horsedrugs_images = load_images(image_path + "GOODhorsedrugs/")
+player_images = load_images(image_path + "wagon/")
+boosticon_images = load_images(image_path + "boost_icon/")
+startbutton_images = load_images(image_path + "startbutton/")
+quitbutton_images = load_images(image_path + "quitbutton/")
+
 class Cactus(pygame.sprite.Sprite):
-    def __init__(self, x = random.randrange(0, display_width), y = -300, width = 50, images = [], speed = 5):
+    def __init__(self, x = random.randrange(0, display_width), y = -300, width = 50, speed = 5):
         super().__init__(all_sprites, cactus_group)
-        self.images = images
-        self.image = images[0]
+        self.images = cactus1_images
+        self.image = self.images[0]
         self.rect = self.image.get_rect()
         self.rect.x = x
         self.rect.y = y
@@ -55,14 +62,30 @@ class Cactus(pygame.sprite.Sprite):
             player.dodged_cactuses += 1
 
             if len(cactus_group.sprites()) < 10:
-                new_cactus = Cactus(images = cactus1_images)
+                new_cactus = Cactus()
             
+class IntroCactus(pygame.sprite.Sprite):
+    def __init__(self):
+        super().__init__(intro_sprites)
+        self.images = cactus1_images
+        self.image = self.images[0]
+        self.rect = self.image.get_rect()
+        self.rect.x = random.randrange(0, display_width)
+        self.rect.y = -random.randrange(0, display_height)
+        self.speed = 5
+        
+
+    def update(self):
+        self.rect.y += self.speed
+        if self.rect.y > display_height:
+            self.rect.y = -random.randrange(10, 100)
+            self.rect.x = random.randrange(0, display_width)
 
 class HorseDrugs(pygame.sprite.Sprite):
-    def __init__(self, x = random.randrange(0, display_width), y = -300, width = 50, images = [], speed = 5):
+    def __init__(self, x = random.randrange(0, display_width), y = -300, width = 50, speed = 5):
         super().__init__(all_sprites)
-        self.images = images
-        self.image = images[0]
+        self.images = horsedrugs_images
+        self.image = self.images[0]
         self.rect = self.image.get_rect()
         self.rect.x = x
         self.rect.y = y
@@ -73,10 +96,10 @@ class HorseDrugs(pygame.sprite.Sprite):
         self.rect.y += self.speed
 
 class Player(pygame.sprite.Sprite):
-    def __init__(self, x = 0.5 * display_width, y = 0.6 * display_height, width = 50, images = [], speed = 10):
+    def __init__(self, x = 0.5 * display_width, y = 0.6 * display_height, width = 50):
         super().__init__(all_sprites)
-        self.images = images
-        self.image = images[0]
+        self.images = player_images
+        self.image = self.images[0]
         self.rect = self.image.get_rect()
         self.width = width
         self.rect.centerx = x
@@ -90,6 +113,7 @@ class Player(pygame.sprite.Sprite):
 
 
     def update(self):
+        print("NOOOOOOO")
         pressed = pygame.key.get_pressed()
 
         up, down, left, right, space = [pressed[key] for key in (pygame.K_UP, pygame.K_DOWN, pygame.K_LEFT, pygame.K_RIGHT, pygame.K_SPACE)]
@@ -116,14 +140,11 @@ class Player(pygame.sprite.Sprite):
         self.rect.centerx += self.x_change
         self.rect.centery += self.y_change
 
-        
-
-
 class boostIcon(pygame.sprite.Sprite):
-    def __init__(self, x = 0.0001 * display_width, y = 0.01 * display_height, images = []):
+    def __init__(self, x = 0.0001 * display_width, y = 0.01 * display_height):
         super().__init__(all_sprites)
         
-        self.images = images
+        self.images = boosticon_images
         self.image = self.images[0]
         self.rect = self.image.get_rect()
         self.rect.x = x
@@ -152,6 +173,36 @@ class Background():
         gameDisplay.blit(self.image, (0, self.y1))
         gameDisplay.blit(self.image, (0, self.y2))
 
+class StartButton(pygame.sprite.Sprite):
+    def __init__(self):
+        super().__init__(intro_sprites)
+
+        self.images = startbutton_images
+        self.image = self.images[1]
+        self.rect = self.image.get_rect()
+        self.rect.centerx = display_width/3
+        self.rect.centery = display_height/2
+
+        self.selected = 1
+
+    def update(self):
+        self.image = self.images[self.selected]
+
+class QuitButton(pygame.sprite.Sprite):
+    def __init__(self):
+        super().__init__(intro_sprites)
+
+        self.images = quitbutton_images
+        self.image = self.images[0]
+        self.rect = self.image.get_rect()
+        self.rect.centerx = 2 * display_width/3
+        self.rect.centery = display_height/2
+
+        self.selected = 0
+    
+    def update(self):
+        self.image = self.images[self.selected]
+
 def generic_text(text, size, color, text_center):
         font = pygame.font.Font("freesansbold.ttf", size)
         rendered_text = font.render(text, True, color)
@@ -162,15 +213,6 @@ def crash():
     pygame.display.quit()
     pygame.quit()
 
-
-#load images for things in gameLoop
-player_images = load_images(image_path + "wagon/")
-drug_images = load_images(image_path + "GOODhorsedrugs/")
-cactus1_images = load_images(image_path + "cactus1/")
-cactus2_images = load_images(image_path + "cactus2/")
-cactus_images = cactus1_images + cactus2_images
-boost_icon_images = load_images(image_path + "boost_icon/")
-number_images = load_images(image_path + "numbers/")
 
 bg_image = pygame.image.load("/Users/elle/repos/wagon-repo/images/background/background0.png").convert_alpha()
 bg_size = bg_image.get_rect().size
@@ -183,52 +225,72 @@ cactus_group = pygame.sprite.RenderUpdates()
 drug_group = pygame.sprite.RenderUpdates()
 all_sprites = pygame.sprite.RenderUpdates()
 hud_group = pygame.sprite.RenderUpdates()
-
-
-#initialize the sprites
-player = Player(0.5 * display_width, 0.7 * display_height, 50, player_images, 10)
-horse_drugs = HorseDrugs(images = drug_images)
-cactus = Cactus(images = cactus1_images)
-boost_icon = boostIcon(images = boost_icon_images)
+intro_sprites = pygame.sprite.RenderUpdates()
 
 #initialize the background
 bg = Background(image = bg_image)
 
-
-#add sprites to non all_sprites groups (sprites initialized in super().init() to be in all_sprites)
-player.add(player_group)
-cactus.add(cactus_group)
-horse_drugs.add(drug_group)
 
 
 
 def Intro():
     running = True
 
-    #initialize sprites for use in intro before later killing them
-    intro_sprites = pygame.sprite.RenderUpdates()
+    #initialize sprites for intro
     for i in range(10):
-        cactus = Cactus(images = cactus1_images)
+        cactus = IntroCactus()
 
+    start_button = StartButton()
+    quit_button = QuitButton()
     
+
     while running:
 
+        print(all_sprites.sprites())
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 running = False
 
-    
-        bg.render()
-        be.update()
-        all_sprites.update()
+        pressed = pygame.key.get_pressed()
+        left, right, space = [pressed[key] for key in (pygame.K_LEFT, pygame.K_RIGHT, pygame.K_SPACE)]
 
-        pygame.display.update(all_sprites.draw(gameDisplay))
+     
+
+        if left:
+            start_button.selected = 1
+            quit_button.selected = 0
+        elif right:
+            start_button.selected = 0
+            quit_button.selected = 1
+
+        if space and start_button.selected:
+            intro_sprites.empty()
+            gameLoop()
+        elif space and quit_button.selected:
+            running = False
+
+        bg.render()
+        bg.update()
+        intro_sprites.update()
+
+        pygame.display.update(intro_sprites.draw(gameDisplay))
 
         clock.tick(30)
     
 
 def gameLoop():
     running = True
+
+    #initialize the sprites
+    player = Player(0.5 * display_width, 0.7 * display_height)
+    horse_drugs = HorseDrugs()
+    cactus = Cactus()
+    boost_icon = boostIcon()
+
+    #add sprites to non all_sprites groups (sprites initialized in super().init() to be in all_sprites)
+    player.add(player_group)
+    cactus.add(cactus_group)
+    horse_drugs.add(drug_group)
 
     while running:
 
@@ -250,13 +312,8 @@ def gameLoop():
             running = False
 
         if pygame.sprite.spritecollide(player, drug_group, False):
-<<<<<<< HEAD
-            horse_drugs.rect.y = -random.randrange(100, 1400)
-            if player.drug_count < 5:
-=======
             horse_drugs.rect.y = -random.randrange(1000, 1600)
             if player.drug_count < 4:
->>>>>>> master
                 player.drug_count += 1
 
         all_sprites.update()
@@ -271,6 +328,6 @@ def gameLoop():
         clock.tick(60)
 
 
-gameLoop()
+Intro()
 pygame.display.quit()
 pygame.quit()
